@@ -2,7 +2,7 @@ const Sauce = require('../models/Sauce');
 
 module.exports = (req, res, next) => {
     try{
-        Sauce.findOne({_id: req.param.id})
+        Sauce.findOne({_id: req.params.id})
             .then(sauce => {
                 if (!sauce) {
                     return res.status(404).json({
@@ -15,7 +15,10 @@ module.exports = (req, res, next) => {
                         error: new Error('Requête non autorisée')
                     });
                 };
+                req.sauce = sauce;
+                next();
             });
+        
         
     }catch(error){
         res.status(401).json({error});

@@ -1,6 +1,10 @@
+const {validationResult}= require ('express-validator');
+const fs = require('fs');
+
 const Sauce = require('../models/Sauce');
 
 exports.createSauce = (req, res, next) => {
+
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
     const sauce = new Sauce({
@@ -21,7 +25,9 @@ exports.modifySauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 
-exports.deleteSauce = (req, res, next) => {
+exports.deleteSauce = (req, res, next) => {     
+    const filename = req.sauce.imageUrl.split('/images/')[1];
+
     fs.unlink(`images/${filename}`, () => {
         Sauce.deleteOne({ _id: req.params.id})
             .then(() => res.status(200).json({message: 'Deleted'}))

@@ -6,10 +6,7 @@ const User = require('../models/User');
 
 
 exports.signup = (req, res, next) => {
-    const emailError = validationResult(req);
-    if (!emailError.isEmpty()){
-        return res.status(400).json({emailError: emailError.array()});
-    };
+    
 
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
