@@ -1,11 +1,18 @@
-const {validationResult}= require ('express-validator');
 const fs = require('fs');
+const sanitizeHtml = require('sanitize-html');
 
 const Sauce = require('../models/Sauce');
 
 exports.createSauce = (req, res, next) => {
 
     const sauceObject = JSON.parse(req.body.sauce);
+
+//  Sanitization
+    sauceObject.name = sanitizeHtml(sauceObject.name);
+    sauceObject.manufacturer = sanitizeHtml(sauceObject.manufacturer);
+    sauceObject.description = sanitizeHtml(sauceObject.description);
+    sauceObject.mainPepper = sanitizeHtml(sauceObject.mainPepper);
+
     delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject,
