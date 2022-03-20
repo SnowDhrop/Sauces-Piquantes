@@ -7,7 +7,7 @@ exports.createSauce = (req, res, next) => {
 
     const sauceObject = JSON.parse(req.body.sauce);
 
-//  Sanitization
+//  Sanitization -- eviter doublons
     sauceObject.name = sanitizeHtml(sauceObject.name);
     sauceObject.manufacturer = sanitizeHtml(sauceObject.manufacturer);
     sauceObject.description = sanitizeHtml(sauceObject.description);
@@ -27,7 +27,14 @@ exports.createSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
-    Sauce.updateOne({_id: req.params.id}, {...req.body, _id: req.params.id})
+    // Sanitization
+    const sauceObject = {};
+    sauceObject.name = sanitizeHtml(req.body.name);
+    sauceObject.manufacturer = sanitizeHtml(req.body.manufacturer);
+    sauceObject.description = sanitizeHtml(req.body.description);
+    sauceObject.mainPepper = sanitizeHtml(req.body.mainPepper);
+
+    Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id})
         .then(() => res.status(200).json({ message: 'Objet modifié '}))
         .catch(error => res.status(400).json({ error }));
 };
@@ -45,7 +52,7 @@ exports.deleteSauce = (req, res, next) => {
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({_id: req.params.id})
         .then(sauce => res.status(200).json(sauce))
-        .catch(error => res.status(404).json({ error }));
+        .catch(error => res.status(400).json({ error }));
 };
 
 exports.getAllSauces = (req, res, next) => {
@@ -94,7 +101,7 @@ exports.likeSauce = (req, res, next) => {
                         break;
 
                     case -1:
-                        if (sauce.usersLiked.includes(req.body.userId)){
+                        if (sauce.usersDisliked.includes(req.body.userId)){
                             throw 'Vous avez déjà disliké';
                         };
 
@@ -108,6 +115,6 @@ exports.likeSauce = (req, res, next) => {
                         break;
                 };
             })
-            .catch(error => res.status(404).json({error}))        
+            .catch(error => res.status(400).json({error}))        
     };
 }

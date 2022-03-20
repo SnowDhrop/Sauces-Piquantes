@@ -13,10 +13,14 @@ exports.signup = (req, res, next) => {
                 email: req.body.email,
                 password: hash
             });
+
+//          Vérif si l'utilisateur existe déjà
+
+
             user.save()
                 .then(() => res.status(201).json({message: 'Utilisateur créé'}))
-                .catch(error => res.status(400).json({error}));
-        })
+                .catch(error => res.status(400).json({message: "Utilisateur déjà présent"}));
+                })
         .catch(error => res.status(500).json({error}));
 };
 
